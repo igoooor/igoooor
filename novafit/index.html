@@ -366,7 +366,9 @@
 
         // Dot navigation
         dots.forEach(dot => {
-            dot.addEventListener('click', () => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const slideIndex = parseInt(dot.getAttribute('data-slide'));
                 updateSlide(slideIndex);
             });
@@ -374,7 +376,9 @@
 
         // Label navigation
         labels.forEach(label => {
-            label.addEventListener('click', () => {
+            label.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const slideIndex = parseInt(label.getAttribute('data-slide'));
                 updateSlide(slideIndex);
             });
@@ -493,14 +497,6 @@
         });
 
         // Show labels on specific interactions (not on arrow clicks)
-        dots.forEach(dot => {
-            dot.addEventListener('click', showLabels);
-        });
-        
-        labels.forEach(label => {
-            label.addEventListener('click', showLabels);
-        });
-        
         document.addEventListener('touchstart', (e) => {
             // Show labels on touch, but not if touching arrows
             if (!e.target.closest('.arrow')) {
