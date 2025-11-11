@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offres Spéciales - Parrainage & Famille</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            padding: 20px 20px;
+            color: #ffffff;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 900;
+            color: #D4AF37;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .page-header p {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.5px;
+        }
+
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1100px) {
+            .offers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .offer-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(212, 175, 55, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .offer-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #D4AF37, #C5A028, #D4AF37);
+        }
+
+        .offer-card:hover {
+            transform: translateY(-8px);
+            box-shadow:
+                0 35px 60px -12px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(212, 175, 55, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .offer-icon {
+            display: none;
+        }
+
+        .offer-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: #D4AF37;
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
+        .offer-description {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .benefit-item {
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 12px;
+            border-left: 4px solid #D4AF37;
+            transition: all 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            background: rgba(40, 40, 40, 0.6);
+            transform: translateX(8px);
+        }
+
+        .benefit-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .benefit-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #D4AF37;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .benefit-value {
+            font-size: 19px;
+            font-weight: 600;
+            color: #ffffff;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .benefit-details {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        /* Family offer specific styling */
+        .family-levels {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #D4AF37;
+            letter-spacing: 0.5px;
+        }
+
+        .discount-highlight {
+            font-size: 36px;
+            font-weight: 900;
+            color: #D4AF37;
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Print optimizations */
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            body::before {
+                display: none;
+            }
+
+            .page-header h1 {
+                color: #000 !important;
+            }
+
+            .offer-card {
+                box-shadow: none;
+                background: white;
+                border: 2px solid #ddd;
+                page-break-inside: avoid;
+            }
+
+            .offer-card::before {
+                background: #D4AF37 !important;
+            }
+
+            .offer-title,
+            .benefit-label,
+            .level-badge,
+            .discount-highlight {
+                color: #000 !important;
+            }
+
+            .benefit-item {
+                background: #f5f5f5 !important;
+                border-left-color: #D4AF37 !important;
+            }
+
+            .offer-card:hover {
+                transform: none;
+            }
+        }
+
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Offres Spéciales</h1>
+            <p>Partagez l'expérience et économisez avec vos proches</p>
+        </div>
+
+        <div class="offers-grid">
+            <!-- Parrainage Card -->
+            <div class="offer-card">
+                <div class="offer-icon">🤝</div>
+                <h2 class="offer-title">Parrainage</h2>
+                <p class="offer-description">
+                    Recommandez-nous à vos amis et profitez tous les deux d'avantages exclusifs.
+                    Plus vous parrainez, plus vous gagnez !
+                </p>
+
+                <ul class="benefits-list">
+                    <li class="benefit-item">
+                        <span class="benefit-label">Pour le Parrain</span>
+                        <div class="benefit-value">1 mois offert</div>
+                        <div class="benefit-details">
+                            Recevez un mois d'abonnement gratuit pour chaque personne parrainée qui souscrit
+                        </div>
+                    </li>
+                    <li class="benefit-item">
+                        <span class="benefit-label">Pour le Filleul</span>
+                        <div class="benefit-value">-50% sur les frais d'inscription</div>
+                        <div class="benefit-details">
+                            Économisez 64,50€ sur vos frais d'inscription lors de votre adhésion
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Offre Famille Card -->
+            <div class="offer-card">
+                <div class="offer-icon">👨‍👩‍👧‍👦</div>
+                <h2 class="offer-title">Offre Famille</h2>
+                <p class="offer-description">
+                    Restez en forme ensemble ! Bénéficiez d'une réduction familiale lorsque plusieurs membres
+                    de votre foyer s'inscrivent au même niveau d'abonnement.
+                </p>
+
+                <ul class="benefits-list">
+                    <li class="benefit-item">
+                        <span class="benefit-label">Réduction familiale</span>
+                        <div class="discount-highlight">-15%</div>
+                        <div class="benefit-details">
+                            Sur les abonnements de même niveau pour tous les membres de la famille
+                        </div>
+                        <div class="family-levels">
+                            <span class="level-badge">FLEX</span>
+                            <span class="level-badge">SMART</span>
+                            <span class="level-badge">PREMIUM</span>
+                        </div>
+                    </li>
+                </ul>
+
+                <div style="margin-top: 20px; padding: 16px; background: rgba(212, 175, 55, 0.05); border-radius: 12px; border: 1px solid rgba(212, 175, 55, 0.2);">
+                    <div style="font-size: 11px; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">
+                        Exemple
+                    </div>
+                    <div style="font-size: 13px; color: rgba(255, 255, 255, 0.8); line-height: 1.5;">
+                        Une famille de 3 personnes avec l'abonnement SMART (89€/mois) : 
+                        <strong style="color: #D4AF37;">226,95€/mois au lieu de 267€</strong>, 
+                        soit <strong style="color: #D4AF37;">480€ d'économies par an</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
