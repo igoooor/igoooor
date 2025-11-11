@@ -47,6 +47,24 @@
             border: none;
         }
 
+        /* Swipe zones for iPad - overlay areas on left and right */
+        .swipe-zone {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 80px;
+            z-index: 999;
+            pointer-events: auto;
+        }
+
+        .swipe-zone.left {
+            left: 0;
+        }
+
+        .swipe-zone.right {
+            right: 0;
+        }
+
         /* Navigation Dots */
         .navigation-dots {
             position: fixed;
@@ -56,33 +74,33 @@
             display: flex;
             gap: 12px;
             z-index: 1000;
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(20px);
+            background: rgba(20, 20, 20, 0.3);
+            backdrop-filter: blur(10px);
             padding: 12px 24px;
             border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
         .dot {
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: rgba(212, 175, 55, 0.3);
+            background: rgba(212, 175, 55, 0.25);
             cursor: pointer;
             transition: all 0.3s ease;
             border: 2px solid transparent;
         }
 
         .dot:hover {
-            background: rgba(212, 175, 55, 0.5);
+            background: rgba(212, 175, 55, 0.4);
             transform: scale(1.2);
         }
 
         .dot.active {
-            background: #D4AF37;
+            background: rgba(212, 175, 55, 0.8);
             width: 32px;
             border-radius: 10px;
-            border-color: rgba(212, 175, 55, 0.3);
+            border-color: rgba(212, 175, 55, 0.2);
         }
 
         /* Navigation Labels */
@@ -99,6 +117,14 @@
             padding: 12px 24px;
             border-radius: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .navigation-labels.visible {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .nav-label {
@@ -130,8 +156,8 @@
             transform: translateY(-50%);
             width: 50px;
             height: 50px;
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(20px);
+            background: rgba(20, 20, 20, 0.3);
+            backdrop-filter: blur(10px);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -139,12 +165,12 @@
             cursor: pointer;
             z-index: 1000;
             transition: all 0.3s ease;
-            border: 2px solid rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.15);
         }
 
         .arrow:hover {
-            background: rgba(30, 30, 30, 0.9);
-            border-color: rgba(212, 175, 55, 0.4);
+            background: rgba(30, 30, 30, 0.4);
+            border-color: rgba(212, 175, 55, 0.25);
             transform: translateY(-50%) scale(1.1);
         }
 
@@ -159,12 +185,18 @@
         .arrow svg {
             width: 24px;
             height: 24px;
-            fill: #D4AF37;
+            fill: rgba(212, 175, 55, 0.8);
         }
 
         .arrow.disabled {
-            opacity: 0.3;
-            pointer-events: none;
+            opacity: 0.2;
+            cursor: default;
+        }
+
+        .arrow.disabled:hover {
+            background: rgba(20, 20, 20, 0.3);
+            transform: translateY(-50%);
+            border-color: rgba(212, 175, 55, 0.15);
         }
 
         /* Loading indicator */
@@ -218,6 +250,10 @@
 </head>
 <body>
     <div class="slider-container">
+        <!-- Swipe zones for iPad -->
+        <div class="swipe-zone left"></div>
+        <div class="swipe-zone right"></div>
+        
         <div class="slides-wrapper" id="slidesWrapper">
             <div class="slide">
                 <div class="loading">Chargement...</div>
@@ -266,6 +302,7 @@
         const slidesWrapper = document.getElementById('slidesWrapper');
         const dots = document.querySelectorAll('.dot');
         const labels = document.querySelectorAll('.nav-label');
+        const labelsContainer = document.querySelector('.navigation-labels');
         const arrowLeft = document.getElementById('arrowLeft');
         const arrowRight = document.getElementById('arrowRight');
 
@@ -273,6 +310,23 @@
         let touchStartX = 0;
         let touchEndX = 0;
         let isDragging = false;
+
+        // Label visibility timeout
+        let labelsTimeout = null;
+
+        function showLabels() {
+            labelsContainer.classList.add('visible');
+            
+            // Clear existing timeout
+            if (labelsTimeout) {
+                clearTimeout(labelsTimeout);
+            }
+            
+            // Hide after 3 seconds
+            labelsTimeout = setTimeout(() => {
+                labelsContainer.classList.remove('visible');
+            }, 3000);
+        }
 
         function updateSlide(index) {
             if (index < 0 || index >= totalSlides) return;
@@ -290,9 +344,12 @@
                 label.classList.toggle('active', i === currentSlide);
             });
             
-            // Update arrows
+            // Update arrows disabled state (but keep them visible)
             arrowLeft.classList.toggle('disabled', currentSlide === 0);
             arrowRight.classList.toggle('disabled', currentSlide === totalSlides - 1);
+            
+            // Show labels when slide changes
+            showLabels();
         }
 
         function nextSlide() {
@@ -324,8 +381,19 @@
         });
 
         // Arrow navigation
-        arrowLeft.addEventListener('click', prevSlide);
-        arrowRight.addEventListener('click', nextSlide);
+        arrowLeft.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentSlide > 0) {
+                prevSlide();
+            }
+        });
+        
+        arrowRight.addEventListener('click', (e) => {
+            e.preventDefault();
+            if (currentSlide < totalSlides - 1) {
+                nextSlide();
+            }
+        });
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -336,18 +404,22 @@
             }
         });
 
-        // Touch/swipe navigation
-        slidesWrapper.addEventListener('touchstart', (e) => {
+        // Touch/swipe navigation - attach to container, not slides wrapper
+        const sliderContainer = document.querySelector('.slider-container');
+        
+        sliderContainer.addEventListener('touchstart', (e) => {
+            // Only handle touches on the container, not on iframes
             touchStartX = e.touches[0].clientX;
             isDragging = true;
+            showLabels();
         }, { passive: true });
 
-        slidesWrapper.addEventListener('touchmove', (e) => {
+        sliderContainer.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
             touchEndX = e.touches[0].clientX;
         }, { passive: true });
 
-        slidesWrapper.addEventListener('touchend', () => {
+        sliderContainer.addEventListener('touchend', (e) => {
             if (!isDragging) return;
             isDragging = false;
             
@@ -373,10 +445,11 @@
         let mouseEndX = 0;
         let isMouseDragging = false;
 
-        slidesWrapper.addEventListener('mousedown', (e) => {
+        sliderContainer.addEventListener('mousedown', (e) => {
             mouseStartX = e.clientX;
             isMouseDragging = true;
-            slidesWrapper.style.cursor = 'grabbing';
+            sliderContainer.style.cursor = 'grabbing';
+            showLabels();
         });
 
         document.addEventListener('mousemove', (e) => {
@@ -387,7 +460,7 @@
         document.addEventListener('mouseup', () => {
             if (!isMouseDragging) return;
             isMouseDragging = false;
-            slidesWrapper.style.cursor = 'grab';
+            sliderContainer.style.cursor = 'default';
             
             const swipeThreshold = 50;
             const diff = mouseStartX - mouseEndX;
@@ -404,11 +477,13 @@
             mouseEndX = 0;
         });
 
-        // Add grab cursor
-        slidesWrapper.style.cursor = 'grab';
-
-        // Hide loading indicators when iframes load
-        document.querySelectorAll('iframe').forEach(iframe => {
+        // Prevent iframe from capturing touch events
+        const iframes = document.querySelectorAll('iframe');
+        iframes.forEach(iframe => {
+            // Add pointer-events style to allow touch passthrough
+            iframe.style.pointerEvents = 'auto';
+            
+            // Hide loading indicators when iframes load
             iframe.addEventListener('load', () => {
                 const loading = iframe.previousElementSibling;
                 if (loading && loading.classList.contains('loading')) {
@@ -416,6 +491,10 @@
                 }
             });
         });
+
+        // Show labels on any interaction
+        document.addEventListener('click', showLabels);
+        document.addEventListener('touchstart', showLabels, { passive: true });
     </script>
 </body>
 </html>
