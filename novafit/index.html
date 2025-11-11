@@ -305,6 +305,7 @@
     </div>
 
     <script>
+        // Slider state
         let currentSlide = 0;
         const totalSlides = 3;
         const slidesWrapper = document.getElementById('slidesWrapper');
@@ -314,25 +315,29 @@
         const dotsContainer = document.querySelector('.navigation-dots');
         const arrowLeft = document.getElementById('arrowLeft');
         const arrowRight = document.getElementById('arrowRight');
+        const sliderContainer = document.querySelector('.slider-container');
 
-        // Touch/swipe variables
-        let touchStartX = 0;
-        let touchEndX = 0;
-        let isDragging = false;
+        // Transition lock to prevent multiple simultaneous transitions
+        let isTransitioning = false;
+        const TRANSITION_DURATION = 400; // Must match CSS transition duration
 
         // Navigation visibility timeout
         let navTimeout = null;
 
+        // Interaction state
+        let interactionStartX = 0;
+        let interactionEndX = 0;
+        let isInteracting = false;
+        let interactionType = null; // 'touch' or 'mouse'
+
         function showNavigation() {
             labelsContainer.classList.add('visible');
             dotsContainer.classList.add('visible');
-            
-            // Clear existing timeout
+
             if (navTimeout) {
                 clearTimeout(navTimeout);
             }
-            
-            // Hide after 2 seconds
+
             navTimeout = setTimeout(() => {
                 labelsContainer.classList.remove('visible');
                 dotsContainer.classList.remove('visible');
@@ -340,38 +345,54 @@
         }
 
         function updateSlide(index) {
-            if (index < 0 || index >= totalSlides) return;
-            
+            // Prevent updates if we're already transitioning or index is invalid
+            if (isTransitioning || index < 0 || index >= totalSlides || index === currentSlide) {
+                return;
+            }
+
+            // Lock transitions
+            isTransitioning = true;
+
             currentSlide = index;
             slidesWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-            
+
             // Update dots
             dots.forEach((dot, i) => {
                 dot.classList.toggle('active', i === currentSlide);
             });
-            
+
             // Update labels
             labels.forEach((label, i) => {
                 label.classList.toggle('active', i === currentSlide);
             });
-            
-            // Update arrows disabled state (but keep them visible)
+
+            // Update arrows
             arrowLeft.classList.toggle('disabled', currentSlide === 0);
             arrowRight.classList.toggle('disabled', currentSlide === totalSlides - 1);
-            
-            // Show navigation when slide changes
+
             showNavigation();
+
+            // Unlock after transition completes
+            setTimeout(() => {
+                isTransitioning = false;
+            }, TRANSITION_DURATION);
         }
 
         function nextSlide() {
-            if (currentSlide < totalSlides - 1) {
+            if (currentSlide < totalSlides - 1 && !isTransitioning) {
                 updateSlide(currentSlide + 1);
             }
         }
 
         function prevSlide() {
-            if (currentSlide > 0) {
+            if (currentSlide > 0 && !isTransitioning) {
                 updateSlide(currentSlide - 1);
+            }
+        }
+
+        function goToSlide(index) {
+            if (!isTransitioning) {
+                updateSlide(index);
             }
         }
 
@@ -381,7 +402,7 @@
                 e.preventDefault();
                 e.stopPropagation();
                 const slideIndex = parseInt(dot.getAttribute('data-slide'));
-                updateSlide(slideIndex);
+                goToSlide(slideIndex);
             });
         });
 
@@ -391,25 +412,27 @@
                 e.preventDefault();
                 e.stopPropagation();
                 const slideIndex = parseInt(label.getAttribute('data-slide'));
-                updateSlide(slideIndex);
+                goToSlide(slideIndex);
             });
         });
 
-        // Arrow navigation
+        // Arrow navigation with explicit click handling
         arrowLeft.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (currentSlide > 0) {
-                prevSlide();
-            }
+            // Cancel any ongoing interaction
+            isInteracting = false;
+            interactionType = null;
+            prevSlide();
         });
-        
+
         arrowRight.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
-            if (currentSlide < totalSlides - 1) {
-                nextSlide();
-            }
+            // Cancel any ongoing interaction
+            isInteracting = false;
+            interactionType = null;
+            nextSlide();
         });
 
         // Keyboard navigation
@@ -421,27 +444,41 @@
             }
         });
 
-        // Touch/swipe navigation - attach to container, not slides wrapper
-        const sliderContainer = document.querySelector('.slider-container');
-        
-        sliderContainer.addEventListener('touchstart', (e) => {
-            // Only handle touches on the container, not on iframes
-            touchStartX = e.touches[0].clientX;
-            isDragging = true;
-        }, { passive: true });
+        // Unified swipe/drag handler
+        function handleInteractionStart(x, type) {
+            // Only start new interaction if not already interacting and not transitioning
+            if (!isInteracting && !isTransitioning) {
+                interactionStartX = x;
+                interactionEndX = x;
+                isInteracting = true;
+                interactionType = type;
 
-        sliderContainer.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            touchEndX = e.touches[0].clientX;
-        }, { passive: true });
+                if (type === 'mouse') {
+                    sliderContainer.style.cursor = 'grabbing';
+                }
+            }
+        }
 
-        sliderContainer.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            
-            const swipeThreshold = 50; // minimum distance for swipe
-            const diff = touchStartX - touchEndX;
-            
+        function handleInteractionMove(x) {
+            if (isInteracting) {
+                interactionEndX = x;
+            }
+        }
+
+        function handleInteractionEnd() {
+            if (!isInteracting) return;
+
+            const type = interactionType;
+            isInteracting = false;
+            interactionType = null;
+
+            if (type === 'mouse') {
+                sliderContainer.style.cursor = 'default';
+            }
+
+            const swipeThreshold = 50;
+            const diff = interactionStartX - interactionEndX;
+
             if (Math.abs(diff) > swipeThreshold) {
                 if (diff > 0) {
                     // Swiped left - go to next slide
@@ -451,54 +488,58 @@
                     prevSlide();
                 }
             }
-            
-            touchStartX = 0;
-            touchEndX = 0;
+
+            interactionStartX = 0;
+            interactionEndX = 0;
+        }
+
+        // Touch events
+        sliderContainer.addEventListener('touchstart', (e) => {
+            // Don't start drag if touching navigation elements
+            if (e.target.closest('.arrow') || e.target.closest('.dot') || e.target.closest('.nav-label')) {
+                return;
+            }
+            handleInteractionStart(e.touches[0].clientX, 'touch');
+        }, { passive: true });
+
+        sliderContainer.addEventListener('touchmove', (e) => {
+            if (isInteracting && interactionType === 'touch') {
+                handleInteractionMove(e.touches[0].clientX);
+            }
+        }, { passive: true });
+
+        sliderContainer.addEventListener('touchend', (e) => {
+            if (interactionType === 'touch') {
+                handleInteractionEnd();
+            }
         });
 
-        // Mouse drag navigation (for desktop)
-        let mouseStartX = 0;
-        let mouseEndX = 0;
-        let isMouseDragging = false;
-
+        // Mouse events
         sliderContainer.addEventListener('mousedown', (e) => {
-            mouseStartX = e.clientX;
-            isMouseDragging = true;
-            sliderContainer.style.cursor = 'grabbing';
+            // Don't start drag if clicking navigation elements
+            if (e.target.closest('.arrow') || e.target.closest('.dot') || e.target.closest('.nav-label')) {
+                return;
+            }
+            handleInteractionStart(e.clientX, 'mouse');
         });
 
         document.addEventListener('mousemove', (e) => {
-            if (!isMouseDragging) return;
-            mouseEndX = e.clientX;
+            if (isInteracting && interactionType === 'mouse') {
+                handleInteractionMove(e.clientX);
+            }
         });
 
         document.addEventListener('mouseup', () => {
-            if (!isMouseDragging) return;
-            isMouseDragging = false;
-            sliderContainer.style.cursor = 'default';
-            
-            const swipeThreshold = 50;
-            const diff = mouseStartX - mouseEndX;
-            
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    nextSlide();
-                } else {
-                    prevSlide();
-                }
+            if (interactionType === 'mouse') {
+                handleInteractionEnd();
             }
-            
-            mouseStartX = 0;
-            mouseEndX = 0;
         });
 
-        // Prevent iframe from capturing touch events
+        // Handle iframe loading
         const iframes = document.querySelectorAll('iframe');
         iframes.forEach(iframe => {
-            // Add pointer-events style to allow touch passthrough
             iframe.style.pointerEvents = 'auto';
-            
-            // Hide loading indicators when iframes load
+
             iframe.addEventListener('load', () => {
                 const loading = iframe.previousElementSibling;
                 if (loading && loading.classList.contains('loading')) {
@@ -507,9 +548,8 @@
             });
         });
 
-        // Show navigation on specific interactions (not on arrow clicks)
+        // Show navigation on touch (but not when interacting with controls)
         document.addEventListener('touchstart', (e) => {
-            // Show navigation on touch, but not if touching arrows
             if (!e.target.closest('.arrow')) {
                 showNavigation();
             }
