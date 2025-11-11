@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarifs & Offres - Navigation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0a;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slides-wrapper {
+            display: flex;
+            height: 100%;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Navigation Dots */
+        .navigation-dots {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .dot:hover {
+            background: rgba(212, 175, 55, 0.5);
+            transform: scale(1.2);
+        }
+
+        .dot.active {
+            background: #D4AF37;
+            width: 32px;
+            border-radius: 10px;
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        /* Navigation Labels */
+        .navigation-labels {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            z-index: 1000;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            padding: 12px 24px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(212, 175, 55, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 12px;
+            border-radius: 16px;
+        }
+
+        .nav-label:hover {
+            color: rgba(212, 175, 55, 0.8);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .nav-label.active {
+            color: #D4AF37;
+            background: rgba(212, 175, 55, 0.15);
+        }
+
+        /* Arrow Navigation */
+        .arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 50px;
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .arrow:hover {
+            background: rgba(30, 30, 30, 0.9);
+            border-color: rgba(212, 175, 55, 0.4);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .arrow.left {
+            left: 20px;
+        }
+
+        .arrow.right {
+            right: 20px;
+        }
+
+        .arrow svg {
+            width: 24px;
+            height: 24px;
+            fill: #D4AF37;
+        }
+
+        .arrow.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        /* Loading indicator */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #D4AF37;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .navigation-labels {
+                top: 10px;
+                padding: 8px 16px;
+                gap: 8px;
+            }
+
+            .nav-label {
+                font-size: 11px;
+                padding: 4px 8px;
+            }
+
+            .navigation-dots {
+                bottom: 20px;
+                padding: 10px 20px;
+            }
+
+            .arrow {
+                width: 40px;
+                height: 40px;
+            }
+
+            .arrow.left {
+                left: 10px;
+            }
+
+            .arrow.right {
+                right: 10px;
+            }
+
+            .arrow svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slides-wrapper" id="slidesWrapper">
+            <div class="slide">
+                <div class="loading">Chargement...</div>
+                <iframe src="https://igoooor.github.io/igoooor/tarifs.html" title="Tarifs"></iframe>
+            </div>
+            <div class="slide">
+                <div class="loading">Chargement...</div>
+                <iframe src="https://igoooor.github.io/igoooor/inauguration.html" title="Inauguration"></iframe>
+            </div>
+            <div class="slide">
+                <div class="loading">Chargement...</div>
+                <iframe src="https://igoooor.github.io/igoooor/offres.html" title="Offres Spéciales"></iframe>
+            </div>
+        </div>
+
+        <!-- Navigation Labels -->
+        <div class="navigation-labels">
+            <div class="nav-label active" data-slide="0">Tarifs</div>
+            <div class="nav-label" data-slide="1">Inauguration</div>
+            <div class="nav-label" data-slide="2">Offres Spéciales</div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="navigation-dots">
+            <div class="dot active" data-slide="0"></div>
+            <div class="dot" data-slide="1"></div>
+            <div class="dot" data-slide="2"></div>
+        </div>
+
+        <!-- Arrow Navigation -->
+        <div class="arrow left disabled" id="arrowLeft">
+            <svg viewBox="0 0 24 24">
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+            </svg>
+        </div>
+        <div class="arrow right" id="arrowRight">
+            <svg viewBox="0 0 24 24">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 3;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const dots = document.querySelectorAll('.dot');
+        const labels = document.querySelectorAll('.nav-label');
+        const arrowLeft = document.getElementById('arrowLeft');
+        const arrowRight = document.getElementById('arrowRight');
+
+        // Touch/swipe variables
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let isDragging = false;
+
+        function updateSlide(index) {
+            if (index < 0 || index >= totalSlides) return;
+            
+            currentSlide = index;
+            slidesWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            // Update dots
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+            
+            // Update labels
+            labels.forEach((label, i) => {
+                label.classList.toggle('active', i === currentSlide);
+            });
+            
+            // Update arrows
+            arrowLeft.classList.toggle('disabled', currentSlide === 0);
+            arrowRight.classList.toggle('disabled', currentSlide === totalSlides - 1);
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                updateSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                updateSlide(currentSlide - 1);
+            }
+        }
+
+        // Dot navigation
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const slideIndex = parseInt(dot.getAttribute('data-slide'));
+                updateSlide(slideIndex);
+            });
+        });
+
+        // Label navigation
+        labels.forEach(label => {
+            label.addEventListener('click', () => {
+                const slideIndex = parseInt(label.getAttribute('data-slide'));
+                updateSlide(slideIndex);
+            });
+        });
+
+        // Arrow navigation
+        arrowLeft.addEventListener('click', prevSlide);
+        arrowRight.addEventListener('click', nextSlide);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (e.key === 'ArrowRight') {
+                nextSlide();
+            }
+        });
+
+        // Touch/swipe navigation
+        slidesWrapper.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            isDragging = true;
+        }, { passive: true });
+
+        slidesWrapper.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            touchEndX = e.touches[0].clientX;
+        }, { passive: true });
+
+        slidesWrapper.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const swipeThreshold = 50; // minimum distance for swipe
+            const diff = touchStartX - touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swiped left - go to next slide
+                    nextSlide();
+                } else {
+                    // Swiped right - go to previous slide
+                    prevSlide();
+                }
+            }
+            
+            touchStartX = 0;
+            touchEndX = 0;
+        });
+
+        // Mouse drag navigation (for desktop)
+        let mouseStartX = 0;
+        let mouseEndX = 0;
+        let isMouseDragging = false;
+
+        slidesWrapper.addEventListener('mousedown', (e) => {
+            mouseStartX = e.clientX;
+            isMouseDragging = true;
+            slidesWrapper.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isMouseDragging) return;
+            mouseEndX = e.clientX;
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (!isMouseDragging) return;
+            isMouseDragging = false;
+            slidesWrapper.style.cursor = 'grab';
+            
+            const swipeThreshold = 50;
+            const diff = mouseStartX - mouseEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+            
+            mouseStartX = 0;
+            mouseEndX = 0;
+        });
+
+        // Add grab cursor
+        slidesWrapper.style.cursor = 'grab';
+
+        // Hide loading indicators when iframes load
+        document.querySelectorAll('iframe').forEach(iframe => {
+            iframe.addEventListener('load', () => {
+                const loading = iframe.previousElementSibling;
+                if (loading && loading.classList.contains('loading')) {
+                    loading.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
