@@ -322,10 +322,10 @@
                 clearTimeout(labelsTimeout);
             }
             
-            // Hide after 3 seconds
+            // Hide after 2 seconds
             labelsTimeout = setTimeout(() => {
                 labelsContainer.classList.remove('visible');
-            }, 3000);
+            }, 2000);
         }
 
         function updateSlide(index) {
@@ -383,6 +383,7 @@
         // Arrow navigation
         arrowLeft.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             if (currentSlide > 0) {
                 prevSlide();
             }
@@ -390,6 +391,7 @@
         
         arrowRight.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation();
             if (currentSlide < totalSlides - 1) {
                 nextSlide();
             }
@@ -411,7 +413,6 @@
             // Only handle touches on the container, not on iframes
             touchStartX = e.touches[0].clientX;
             isDragging = true;
-            showLabels();
         }, { passive: true });
 
         sliderContainer.addEventListener('touchmove', (e) => {
@@ -449,7 +450,6 @@
             mouseStartX = e.clientX;
             isMouseDragging = true;
             sliderContainer.style.cursor = 'grabbing';
-            showLabels();
         });
 
         document.addEventListener('mousemove', (e) => {
@@ -492,9 +492,21 @@
             });
         });
 
-        // Show labels on any interaction
-        document.addEventListener('click', showLabels);
-        document.addEventListener('touchstart', showLabels, { passive: true });
+        // Show labels on specific interactions (not on arrow clicks)
+        dots.forEach(dot => {
+            dot.addEventListener('click', showLabels);
+        });
+        
+        labels.forEach(label => {
+            label.addEventListener('click', showLabels);
+        });
+        
+        document.addEventListener('touchstart', (e) => {
+            // Show labels on touch, but not if touching arrows
+            if (!e.target.closest('.arrow')) {
+                showLabels();
+            }
+        }, { passive: true });
     </script>
 </body>
 </html>
