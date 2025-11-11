@@ -79,6 +79,14 @@
             padding: 12px 24px;
             border-radius: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .navigation-dots.visible {
+            opacity: 1;
+            pointer-events: auto;
         }
 
         .dot {
@@ -303,6 +311,7 @@
         const dots = document.querySelectorAll('.dot');
         const labels = document.querySelectorAll('.nav-label');
         const labelsContainer = document.querySelector('.navigation-labels');
+        const dotsContainer = document.querySelector('.navigation-dots');
         const arrowLeft = document.getElementById('arrowLeft');
         const arrowRight = document.getElementById('arrowRight');
 
@@ -311,20 +320,22 @@
         let touchEndX = 0;
         let isDragging = false;
 
-        // Label visibility timeout
-        let labelsTimeout = null;
+        // Navigation visibility timeout
+        let navTimeout = null;
 
-        function showLabels() {
+        function showNavigation() {
             labelsContainer.classList.add('visible');
+            dotsContainer.classList.add('visible');
             
             // Clear existing timeout
-            if (labelsTimeout) {
-                clearTimeout(labelsTimeout);
+            if (navTimeout) {
+                clearTimeout(navTimeout);
             }
             
             // Hide after 2 seconds
-            labelsTimeout = setTimeout(() => {
+            navTimeout = setTimeout(() => {
                 labelsContainer.classList.remove('visible');
+                dotsContainer.classList.remove('visible');
             }, 2000);
         }
 
@@ -348,8 +359,8 @@
             arrowLeft.classList.toggle('disabled', currentSlide === 0);
             arrowRight.classList.toggle('disabled', currentSlide === totalSlides - 1);
             
-            // Show labels when slide changes
-            showLabels();
+            // Show navigation when slide changes
+            showNavigation();
         }
 
         function nextSlide() {
@@ -496,11 +507,11 @@
             });
         });
 
-        // Show labels on specific interactions (not on arrow clicks)
+        // Show navigation on specific interactions (not on arrow clicks)
         document.addEventListener('touchstart', (e) => {
-            // Show labels on touch, but not if touching arrows
+            // Show navigation on touch, but not if touching arrows
             if (!e.target.closest('.arrow')) {
-                showLabels();
+                showNavigation();
             }
         }, { passive: true });
     </script>
