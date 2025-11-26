@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services à la Carte & Packs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            padding: 10px 12px;
+            color: #ffffff;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: #D4AF37;
+            margin-bottom: 4px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .page-header p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.5px;
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: #D4AF37;
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            position: relative;
+            padding-bottom: 8px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .service-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            padding: 12px 14px;
+            box-shadow:
+                0 10px 25px -8px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(212, 175, 55, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #D4AF37, #C5A028, #D4AF37);
+        }
+
+        .service-card:hover {
+            transform: translateY(-3px);
+            box-shadow:
+                0 15px 30px -8px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(212, 175, 55, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .service-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .service-note {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 8px;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .service-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .price-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 900;
+            color: #D4AF37;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .price-currency {
+            font-size: 14px;
+            font-weight: 600;
+            color: #D4AF37;
+        }
+
+        /* Packs Section */
+        .packs-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .pack-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 14px;
+            padding: 14px 16px;
+            box-shadow:
+                0 10px 25px -8px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(212, 175, 55, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pack-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #D4AF37, #C5A028, #D4AF37);
+        }
+
+        .pack-card:hover {
+            transform: translateY(-4px);
+            box-shadow:
+                0 15px 30px -8px rgba(0, 0, 0, 0.6),
+                0 0 0 1px rgba(212, 175, 55, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        .pack-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .pack-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #D4AF37;
+            letter-spacing: 0.5px;
+        }
+
+        .pack-price-container {
+            text-align: right;
+        }
+
+        .pack-price {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: #D4AF37;
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .pack-price-currency {
+            font-size: 14px;
+            font-weight: 600;
+            color: #D4AF37;
+        }
+
+        .pack-includes {
+            background: rgba(30, 30, 30, 0.5);
+            border-radius: 10px;
+            padding: 10px 12px;
+            border-left: 3px solid #D4AF37;
+        }
+
+        .pack-includes-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .pack-includes-content {
+            font-size: 12px;
+            font-weight: 500;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        .pack-value {
+            display: inline-block;
+            margin-top: 6px;
+            padding: 3px 10px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.08));
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .pack-savings {
+            margin-top: 10px;
+            padding: 8px 10px;
+            background: rgba(212, 175, 55, 0.08);
+            border-radius: 8px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            text-align: center;
+        }
+
+        .pack-savings-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pack-savings-amount {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #D4AF37;
+            margin-top: 2px;
+        }
+
+        /* Print optimizations */
+        @media print {
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            body::before {
+                display: none;
+            }
+
+            .page-header h1 {
+                color: #000 !important;
+            }
+
+            .service-card,
+            .pack-card {
+                box-shadow: none;
+                background: white;
+                border: 2px solid #ddd;
+                page-break-inside: avoid;
+            }
+
+            .service-card::before,
+            .pack-card::before {
+                background: #D4AF37 !important;
+            }
+
+            .section-title,
+            .service-name,
+            .pack-name,
+            .price-amount,
+            .pack-price {
+                color: #000 !important;
+            }
+
+            .service-card:hover,
+            .pack-card:hover {
+                transform: none;
+            }
+        }
+
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Services à la Carte</h1>
+            <p>Des services premium accessibles selon vos besoins</p>
+        </div>
+
+        <h2 class="section-title">Tarifs Unitaires</h2>
+
+        <div class="services-grid">
+            <div class="service-card">
+                <div>
+                    <div class="service-name">Pass Journée</div>
+                    <div class="service-note">Déduit des frais d'inscription en cas d'abonnement sous 3 semaines</div>
+                </div>
+                <div class="service-price">
+                    <span class="price-amount">15</span>
+                    <span class="price-currency">€</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div>
+                    <div class="service-name">Pass 10 Jours</div>
+                    <div class="service-note">Accès complet pendant 10 jours</div>
+                </div>
+                <div class="service-price">
+                    <span class="price-amount">120</span>
+                    <span class="price-currency">€</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div>
+                    <div class="service-name">Coaching Individuel 1h</div>
+                    <div class="service-note">Séance personnalisée avec un coach expert</div>
+                </div>
+                <div class="service-price">
+                    <span class="price-amount">60</span>
+                    <span class="price-currency">€</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div>
+                    <div class="service-name">Pack 10 Séances Coaching</div>
+                    <div class="service-note">Économisez 120€ sur vos séances de coaching</div>
+                </div>
+                <div class="service-price">
+                    <span class="price-amount">480</span>
+                    <span class="price-currency">€</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div>
+                    <div class="service-name">Bilan Forme</div>
+                    <div class="service-note">Analyse complète de votre condition physique</div>
+                </div>
+                <div class="service-price">
+                    <span class="price-amount">45</span>
+                    <span class="price-currency">€</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div>
+                    <div class="service-name">Thermothérapie Express</div>
+                    <div class="service-note">Séance de récupération par la chaleur</div>
+                </div>
+                <div class="service-price">
+                    <span class="price-amount">10</span>
+                    <span class="price-currency">€</span>
+                </div>
+            </div>
+
+            <div class="service-card">
+                <div>
+                    <div class="service-name">Programme Personnalisé 6 Semaines</div>
+                    <div class="service-note">Mis à jour 1 fois gratuitement</div>
+                </div>
+                <div class="service-price">
+                    <span class="price-amount">95</span>
+                    <span class="price-currency">€</span>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">Packs Avantageux</h2>
+
+        <div class="packs-grid">
+            <div class="pack-card">
+                <div class="pack-header">
+                    <div class="pack-name">Pack de Démarrage</div>
+                    <div class="pack-price-container">
+                        <span class="pack-price">112</span>
+                        <span class="pack-price-currency">€</span>
+                    </div>
+                </div>
+                <div class="pack-includes">
+                    <div class="pack-includes-label">Inclus dans le pack</div>
+                    <div class="pack-includes-content">
+                        Bilan Forme + Programme personnalisé 6 semaines
+                    </div>
+                    <div class="pack-value">Valeur : 140€</div>
+                </div>
+                <div class="pack-savings">
+                    <div class="pack-savings-label">Vous économisez</div>
+                    <div class="pack-savings-amount">28€ (-20%)</div>
+                </div>
+            </div>
+
+            <div class="pack-card">
+                <div class="pack-header">
+                    <div class="pack-name">Pack Transformation 3 Mois</div>
+                    <div class="pack-price-container">
+                        <span class="pack-price">299</span>
+                        <span class="pack-price-currency">€</span>
+                    </div>
+                </div>
+                <div class="pack-includes">
+                    <div class="pack-includes-label">Inclus dans le pack</div>
+                    <div class="pack-includes-content">
+                        3 Bilans Forme + 2 Programmes personnalisés + 3 Séances de coaching
+                    </div>
+                    <div class="pack-value">Valeur : 505€</div>
+                </div>
+                <div class="pack-savings">
+                    <div class="pack-savings-label">Vous économisez</div>
+                    <div class="pack-savings-amount">206€ (-41%)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
