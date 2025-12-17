@@ -47,6 +47,13 @@
             border: none;
         }
 
+        .slide-external iframe {
+            all: revert;
+            width: 100% !important;
+            height: 100% !important;
+            border: none !important;
+        }
+
         /* Swipe zones for iPad - overlay areas on left and right */
         .swipe-zone {
             position: fixed;
@@ -278,8 +285,8 @@
             <div class="slide" style="display: flex; align-items: center; justify-content: center; background: #0a0a0a;">
                 <img src="planning.jpeg" alt="Planning" style="max-width: 100%; max-height: 100%; object-fit: contain;">
             </div>
-            <div class="slide">
-<iframe src="https://desk-terminal.resamania.com/novafit" title="Resamania"></iframe>
+            <div class="slide slide-external">
+                <iframe src="https://desk-terminal.resamania.com/novafit" title="Resamania" style="all: revert;"></iframe>
             </div>
         </div>
 
