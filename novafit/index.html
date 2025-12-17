@@ -54,53 +54,7 @@
             border: none !important;
         }
 
-/* Navigation Dots */
-        .navigation-dots {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 12px;
-            z-index: 1000;
-            background: rgba(20, 20, 20, 0.3);
-            backdrop-filter: blur(10px);
-            padding: 12px 24px;
-            border-radius: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .navigation-dots.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(212, 175, 55, 0.25);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .dot:hover {
-            background: rgba(212, 175, 55, 0.4);
-            transform: scale(1.2);
-        }
-
-        .dot.active {
-            background: rgba(212, 175, 55, 0.8);
-            width: 32px;
-            border-radius: 10px;
-            border-color: rgba(212, 175, 55, 0.2);
-        }
-
-        /* Navigation Labels */
+/* Navigation Labels */
         .navigation-labels {
             position: fixed;
             top: 20px;
@@ -220,11 +174,6 @@
                 padding: 4px 8px;
             }
 
-            .navigation-dots {
-                bottom: 20px;
-                padding: 10px 20px;
-            }
-
             .arrow {
                 width: 40px;
                 height: 40px;
@@ -278,17 +227,7 @@
             <div class="nav-label" data-slide="5">Resamania</div>
         </div>
 
-        <!-- Navigation Dots -->
-        <div class="navigation-dots">
-            <div class="dot active" data-slide="0"></div>
-            <div class="dot" data-slide="1"></div>
-            <div class="dot" data-slide="2"></div>
-            <div class="dot" data-slide="3"></div>
-            <div class="dot" data-slide="4"></div>
-            <div class="dot" data-slide="5"></div>
-        </div>
-
-        <!-- Arrow Navigation -->
+<!-- Arrow Navigation -->
         <div class="arrow left disabled" id="arrowLeft">
             <svg viewBox="0 0 24 24">
                 <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
@@ -306,10 +245,8 @@
         let currentSlide = 0;
         const totalSlides = 6;
         const slidesWrapper = document.getElementById('slidesWrapper');
-        const dots = document.querySelectorAll('.dot');
         const labels = document.querySelectorAll('.nav-label');
         const labelsContainer = document.querySelector('.navigation-labels');
-        const dotsContainer = document.querySelector('.navigation-dots');
         const arrowLeft = document.getElementById('arrowLeft');
         const arrowRight = document.getElementById('arrowRight');
         const sliderContainer = document.querySelector('.slider-container');
@@ -329,7 +266,6 @@
 
         function showNavigation() {
             labelsContainer.classList.add('visible');
-            dotsContainer.classList.add('visible');
 
             if (navTimeout) {
                 clearTimeout(navTimeout);
@@ -337,7 +273,6 @@
 
             navTimeout = setTimeout(() => {
                 labelsContainer.classList.remove('visible');
-                dotsContainer.classList.remove('visible');
             }, 2000);
         }
 
@@ -352,11 +287,6 @@
 
             currentSlide = index;
             slidesWrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-
-            // Update dots
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === currentSlide);
-            });
 
             // Update labels
             labels.forEach((label, i) => {
@@ -393,17 +323,7 @@
             }
         }
 
-        // Dot navigation
-        dots.forEach(dot => {
-            dot.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const slideIndex = parseInt(dot.getAttribute('data-slide'));
-                goToSlide(slideIndex);
-            });
-        });
-
-        // Label navigation
+// Label navigation
         labels.forEach(label => {
             label.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -493,7 +413,7 @@
         // Touch events
         sliderContainer.addEventListener('touchstart', (e) => {
             // Don't start drag if touching navigation elements
-            if (e.target.closest('.arrow') || e.target.closest('.dot') || e.target.closest('.nav-label')) {
+            if (e.target.closest('.arrow') || e.target.closest('.nav-label')) {
                 return;
             }
             handleInteractionStart(e.touches[0].clientX, 'touch');
@@ -514,7 +434,7 @@
         // Mouse events
         sliderContainer.addEventListener('mousedown', (e) => {
             // Don't start drag if clicking navigation elements
-            if (e.target.closest('.arrow') || e.target.closest('.dot') || e.target.closest('.nav-label')) {
+            if (e.target.closest('.arrow') || e.target.closest('.nav-label')) {
                 return;
             }
             handleInteractionStart(e.clientX, 'mouse');
