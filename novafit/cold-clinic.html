@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cold Clinic - Tarifs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+            padding: 15px;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 38px;
+            font-weight: 700;
+            color: #64B4DC;
+            margin-bottom: 6px;
+        }
+
+        .page-header p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .category {
+            margin-bottom: 28px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .category-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #D4AF37;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .category-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.4), transparent);
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .section {
+            background: rgba(20, 20, 20, 0.6);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(100, 180, 220, 0.15);
+        }
+
+        .section-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #64B4DC;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(100, 180, 220, 0.2);
+        }
+
+        .tarif-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tarif-item:last-child {
+            border-bottom: none;
+        }
+
+        .tarif-name {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .tarif-price {
+            font-family: 'Crimson Pro', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #64B4DC;
+        }
+
+        .tarif-detail {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 2px;
+        }
+
+        .tarif-pack {
+            background: rgba(100, 180, 220, 0.08);
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        .tarif-pack .tarif-name {
+            color: #64B4DC;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 30px;
+            }
+
+            .category-title {
+                font-size: 18px;
+            }
+
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Cold Clinic</h1>
+            <p>Tarifs et prestations</p>
+        </div>
+
+        <!-- Catégorie Remise en forme -->
+        <div class="category">
+            <div class="category-header">
+                <h2 class="category-title">Remise en forme</h2>
+                <div class="category-line"></div>
+            </div>
+
+            <div class="sections-grid">
+                <!-- Cryo -->
+                <div class="section">
+                    <h3 class="section-title">Cryo Corps Entier</h3>
+
+                    <div class="tarif-item">
+                        <div class="tarif-name">Séance unique</div>
+                        <div class="tarif-price">45€</div>
+                    </div>
+
+                    <div class="tarif-item">
+                        <div class="tarif-name">Pack 10 séances</div>
+                        <div class="tarif-price">390€</div>
+                    </div>
+                </div>
+
+                <!-- Pressothérapie -->
+                <div class="section">
+                    <h3 class="section-title">Pressothérapie</h3>
+
+                    <div class="tarif-item">
+                        <div class="tarif-name">Séance unique</div>
+                        <div class="tarif-price">30€</div>
+                    </div>
+
+                    <div class="tarif-item">
+                        <div class="tarif-name">Pack 10 séances</div>
+                        <div class="tarif-price">180€</div>
+                    </div>
+                </div>
+
+                <!-- Pack -->
+                <div class="section">
+                    <h3 class="section-title">Pack Récup Détente</h3>
+
+                    <div class="tarif-item tarif-pack">
+                        <div class="tarif-name">CCE + Presso</div>
+                        <div class="tarif-price">70€</div>
+                    </div>
+
+                    <div class="tarif-item tarif-pack">
+                        <div>
+                            <div class="tarif-name">10 x CCE + Presso</div>
+                            <div class="tarif-detail">soit 55€ la séance</div>
+                        </div>
+                        <div class="tarif-price">550€</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Catégorie Esthétique -->
+        <div class="category">
+            <div class="category-header">
+                <h2 class="category-title">Esthétique</h2>
+                <div class="category-line"></div>
+            </div>
+
+            <div class="sections-grid">
+                <!-- Cryolipolyse -->
+                <div class="section">
+                    <h3 class="section-title">Cryolipolyse</h3>
+
+                    <div class="tarif-item">
+                        <div class="tarif-name">1 zone</div>
+                        <div class="tarif-price">150€</div>
+                    </div>
+
+                    <div class="tarif-item">
+                        <div>
+                            <div class="tarif-name">3 zones</div>
+                            <div class="tarif-detail">soit 120€ la zone</div>
+                        </div>
+                        <div class="tarif-price">360€</div>
+                    </div>
+                </div>
+
+                <!-- E-Sculpt -->
+                <div class="section">
+                    <h3 class="section-title">E-Sculpt</h3>
+                    <div class="tarif-detail" style="margin-bottom: 12px;">2 zones au choix : ventre, fesses, cuisses, bras</div>
+
+                    <div class="tarif-item">
+                        <div class="tarif-name">Séance unique</div>
+                        <div class="tarif-price">89€</div>
+                    </div>
+
+                    <div class="tarif-item">
+                        <div>
+                            <div class="tarif-name">Pack 6 séances</div>
+                            <div class="tarif-detail">soit 79€ la séance</div>
+                        </div>
+                        <div class="tarif-price">479€</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
